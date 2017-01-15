@@ -4,12 +4,33 @@ from matplotlib import animation
 import random
 
 # Deliberately terrible code for teaching purposes
+
+def initiate_array(size, low, high):
+    return [random.uniform(low, high) for x in range(size)]
+
 no_boids = 50
-boids_x=[random.uniform(-450,50.0) for x in range(no_boids)]
-boids_y=[random.uniform(300.0,600.0) for x in range(no_boids)]
-boid_x_velocities=[random.uniform(0,10.0) for x in range(no_boids)]
-boid_y_velocities=[random.uniform(-20.0,20.0) for x in range(no_boids)]
+
+# initialise (x,y) positions of boids uniformly
+boids_x = initiate_array(no_boids, -450.0, 50.0)
+boids_y = initiate_array(no_boids, 300.0, 600.0)
+# initialise (x,y) velocities of boids uniformly
+boid_x_velocities = initiate_array(no_boids, 0.0, 10.0)
+boid_y_velocities = initiate_array(no_boids, -20.0, 20.0)
+
 boids=(boids_x,boids_y,boid_x_velocities,boid_y_velocities)
+
+# separate functions for updating positions and velocities
+# change from list structures to numpy arrays
+# does it make sense to treat x and y separately, or put
+# them in the same array?
+# stop for range, and use for x in array
+# vectorisation of the code
+
+def update_velocities(position, velocity):
+
+    for item in velocity:
+        item = item + ()
+
 
 def update_boids(boids):
     xs,ys,xvs,yvs=boids
@@ -37,16 +58,15 @@ def update_boids(boids):
         xs[i]=xs[i]+xvs[i]
         ys[i]=ys[i]+yvs[i]
 
-    figure=plt.figure()
-    axes=plt.axes(xlim=(-500,1500), ylim=(-500,1500))
-    scatter=axes.scatter(boids[0],boids[1])
+figure=plt.figure()
+axes=plt.axes(xlim=(-500,1500), ylim=(-500,1500))
+scatter=axes.scatter(boids[0],boids[1])
 
-    def animate(frame):
-        update_boids(boids)
-        scatter.set_offsets(zip(boids[0],boids[1]))
+def animate(frame):
+    update_boids(boids)
+    scatter.set_offsets((boids[0],boids[1]))
 
-    anim = animation.FuncAnimation(figure, animate,
-                               frames=50, interval=50)
+anim = animation.FuncAnimation(figure, animate, frames=50, interval=50)
 
-    if __name__ == "__main__":
-        plt.show()
+if __name__ == "__main__":
+    plt.show()
