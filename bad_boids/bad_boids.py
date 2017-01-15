@@ -11,10 +11,12 @@ boid_x_velocities=[random.uniform(0,10.0) for x in range(no_boids)]
 boid_y_velocities=[random.uniform(-20.0,20.0) for x in range(no_boids)]
 boids=(boids_x,boids_y,boid_x_velocities,boid_y_velocities)
 
-def update_boids(boids): xs,ys,xvs,yvs=boids
-    # Fly towards the middle for i in range(no_boids):
-    for j in range(no_boids):
-        xvs[i]=xvs[i]+(xs[j]-xs[i])*0.01/len(xs)
+def update_boids(boids):
+    xs,ys,xvs,yvs=boids
+    # Fly towards the middle
+    for i in range(no_boids):
+        for j in range(no_boids):
+            xvs[i]=xvs[i]+(xs[j]-xs[i])*0.01/len(xs)
     for i in range(no_boids):
         for j in range(no_boids):
             yvs[i]=yvs[i]+(ys[j]-ys[i])*0.01/len(xs)
