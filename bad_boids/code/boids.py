@@ -12,10 +12,12 @@ def initiate_array(size, low, high):
 no_boids = 50
 
 # initialise (x,y) positions of boids uniformly
-postions = initiate_array(no_boids, np.array([-450.0,300.0]), np.array([300.0,600.0]))
+positions = initiate_array(no_boids, np.array([-450.0,300.0]), np.array([300.0,600.0]))
 velocities = initiate_array(no_boids, np.array([0.0,-20.0]), np.array([10.0,20.0]))
 
-boids= np.asarray((postions,velocities))
+boids= np.asarray([positions[0], positions[1],velocities[0], velocities[1]])
+
+np.shape(boids)
 
 # separate functions for updating positions and velocities
 # change from list structures to numpy arrays
@@ -31,35 +33,32 @@ def update_velocities(position, velocity):
 
 
 def update_boids(boids):
-    xs,ys,xvs,yvs=boids
+    positions, velocities = (boids[0:2], boids[2:4])
     # Fly towards the middle
 
-    x_mean, y_mean = (np.sum(xs)/no_boids, np.sum(ys)/no_boids)
-    direction_x = (xs - x_mean)
-    direction_y = (ys - y_mean)
+    means = np.mean(positions,1)
+    direction = positions - means[:,np.newaxis]
 
-    # update positions in vectorised operation
-    xvs -= direction_x*0.01
-    yvs -= direction_y*0.01
+    # update velocities in vectorised operation
+    velocities -= direction*0.01
+
 
     for i in range(no_boids):
         for j in range(no_boids):
 
             # Fly away from nearby boids
+            if np.sum((positions[:,j]- positions[:,i])**2) < 100:
+                velocities[:,i] += (positions[:,i]-positions[:,j])
 
-            if (xs[j]-xs[i])**2 + (ys[j]-ys[i])**2 < 100:
-                xvs[i]=xvs[i]+(xs[i]-xs[j])
-                yvs[i]=yvs[i]+(ys[i]-ys[j])
     # Try to match speed with nearby boids
     for i in range(no_boids):
         for j in range(no_boids):
-            if (xs[j]-xs[i])**2 + (ys[j]-ys[i])**2 < 10000:
-                xvs[i]=xvs[i]+(xvs[j]-xvs[i])*0.125/len(xs)
-                yvs[i]=yvs[i]+(yvs[j]-yvs[i])*0.125/len(xs)
+            if np.sum((positions[:,j]-positions[:,i])**2) < 10000:
+                velocities[:,i] += (velocities[:,j]-velocities[:,i])*0.125/no_boids
+
     # Move according to velocities
     for i in range(no_boids):
-        xs[i]=xs[i]+xvs[i]
-        ys[i]=ys[i]+yvs[i]
+        positions[:,i] += velocities[:,i]
 
 figure=plt.figure()
 axes=plt.axes(xlim=(-500,1500), ylim=(-500,1500))
