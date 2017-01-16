@@ -58,8 +58,7 @@ def update_boids(boids):
                 velocities[:,i] += (velocities[:,j]-velocities[:,i])*0.125/no_boids
 
     # Move according to velocities
-    for i in range(no_boids):
-        positions[:,i] += velocities[:,i]
+    positions += velocities
 
 figure=plt.figure()
 axes=plt.axes(xlim=(-500,1500), ylim=(-500,1500))
