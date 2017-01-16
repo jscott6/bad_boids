@@ -2,11 +2,12 @@
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import random
+import numpy as np
 
 # Deliberately terrible code for teaching purposes
 
 def initiate_array(size, low, high):
-    return [random.uniform(low, high) for x in range(size)]
+    return low + np.random.rand(1, size)*(high - low)
 
 no_boids = 50
 
@@ -34,25 +35,33 @@ def update_velocities(position, velocity):
 
 def update_boids(boids):
     xs,ys,xvs,yvs=boids
+    # Fly towards the middle
+
+    # compute mean positions
+    x_mean, y_mean = (np.sum(xs)/no_boids, np.sum(ys)/no_boids)
+    direction_x = (xs - x_mean)
+    direction_y = (ys - y_mean)
+
+    # update positions in vectorised operation
+    xvs -= direction_x*0.01
+    yvs -= direction_y*0.01
 
     for i in range(no_boids):
         for j in range(no_boids):
 
-            # Fly towards the middle
-            xvs[i]=xvs[i]+(xs[j]-xs[i])*0.01/len(xs)
-            yvs[i]=yvs[i]+(ys[j]-ys[i])*0.01/len(xs)
-
             # Fly away from nearby boids
+
             if (xs[j]-xs[i])**2 + (ys[j]-ys[i])**2 < 100:
                 xvs[i]=xvs[i]+(xs[i]-xs[j])
                 yvs[i]=yvs[i]+(ys[i]-ys[j])
-
-            # Try to match speed with nearby boids
+    # Try to match speed with nearby boids
+    for i in range(no_boids):
+        for j in range(no_boids):
             if (xs[j]-xs[i])**2 + (ys[j]-ys[i])**2 < 10000:
                 xvs[i]=xvs[i]+(xvs[j]-xvs[i])*0.125/len(xs)
                 yvs[i]=yvs[i]+(yvs[j]-yvs[i])*0.125/len(xs)
-
-        # Move according to velocities
+    # Move according to velocities
+    for i in range(no_boids):
         xs[i]=xs[i]+xvs[i]
         ys[i]=ys[i]+yvs[i]
 

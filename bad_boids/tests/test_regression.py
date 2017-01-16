@@ -7,11 +7,12 @@ from bad_boids.code import boids
 import pytest
 import os
 import yaml
+import numpy as np
 
 def test_bad_boids_regression():
     regression_data = yaml.load(open(
         os.path.join(os.path.dirname(__file__),
         'fixture.yaml')))
-    boid_data = regression_data["before"]
+    boid_data = np.asarray(regression_data["before"])
     boids.update_boids(boid_data)
-    assert regression_data["after"] == boid_data
+    assert np.all(abs(np.asarray(regression_data["after"]) - boid_data) < 1e-4)
