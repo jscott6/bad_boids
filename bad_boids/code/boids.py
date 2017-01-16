@@ -7,18 +7,15 @@ import numpy as np
 # Deliberately terrible code for teaching purposes
 
 def initiate_array(size, low, high):
-    return low + np.random.rand(1, size)*(high - low)
+    return low[:,np.newaxis] + np.random.rand(2, size)*(high[:,np.newaxis] - low[:,np.newaxis])
 
 no_boids = 50
 
 # initialise (x,y) positions of boids uniformly
-boids_x = initiate_array(no_boids, -450.0, 50.0)
-boids_y = initiate_array(no_boids, 300.0, 600.0)
-# initialise (x,y) velocities of boids uniformly
-boid_x_velocities = initiate_array(no_boids, 0.0, 10.0)
-boid_y_velocities = initiate_array(no_boids, -20.0, 20.0)
+postions = initiate_array(no_boids, np.array([-450.0,300.0]), np.array([300.0,600.0]))
+velocities = initiate_array(no_boids, np.array([0.0,-20.0]), np.array([10.0,20.0]))
 
-boids=(boids_x,boids_y,boid_x_velocities,boid_y_velocities)
+boids= np.asarray((postions,velocities))
 
 # separate functions for updating positions and velocities
 # change from list structures to numpy arrays
@@ -37,7 +34,6 @@ def update_boids(boids):
     xs,ys,xvs,yvs=boids
     # Fly towards the middle
 
-    # compute mean positions
     x_mean, y_mean = (np.sum(xs)/no_boids, np.sum(ys)/no_boids)
     direction_x = (xs - x_mean)
     direction_y = (ys - y_mean)
