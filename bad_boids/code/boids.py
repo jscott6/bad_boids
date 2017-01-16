@@ -17,7 +17,6 @@ velocities = initiate_array(no_boids, np.array([0.0,-20.0]), np.array([10.0,20.0
 
 boids= np.asarray([positions[0], positions[1],velocities[0], velocities[1]])
 
-np.shape(boids)
 
 # separate functions for updating positions and velocities
 # change from list structures to numpy arrays
@@ -33,22 +32,24 @@ def update_velocities(position, velocity):
 
 
 def update_boids(boids):
-    positions, velocities = (boids[0:2], boids[2:4])
-    # Fly towards the middle
 
+    positions, velocities = (boids[0:2], boids[2:4])
+
+    # Fly towards the middle
     means = np.mean(positions,1)
     direction = positions - means[:,np.newaxis]
-
-    # update velocities in vectorised operation
     velocities -= direction*0.01
 
-
-    for i in range(no_boids):
-        for j in range(no_boids):
-
-            # Fly away from nearby boids
-            if np.sum((positions[:,j]- positions[:,i])**2) < 100:
-                velocities[:,i] += (positions[:,i]-positions[:,j])
+    # Fly away from nearby boids
+    displacement = positions[:, np.newaxis,:] - positions[:,:,np.newaxis]
+    sq_displacement = displacement*displacement
+    sq_distances = np.sum(sq_displacement, 0)
+    crit_distance = 100
+    close = sq_distances > crit_distance
+    displacement_if_close = np.copy(displacement)
+    displacement_if_close[0,:,:][close] = 0
+    displacement_if_close[1,:,:][close] = 0
+    velocities += np.sum(displacement_if_close,1)
 
     # Try to match speed with nearby boids
     for i in range(no_boids):
@@ -68,7 +69,7 @@ def animate(frame):
     update_boids(boids)
     scatter.set_offsets((boids[0],boids[1]))
 
-anim = animation.FuncAnimation(figure, animate, frames=50, interval=50)
+anim = animation.FuncAnimation(figure, animate, frames=200, interval=50)
 
 if __name__ == "__main__":
     plt.show()
