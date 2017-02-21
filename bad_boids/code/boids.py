@@ -15,16 +15,6 @@ no_boids = 50
 positions = initiate_array(no_boids, np.array([-450.0,300.0]), np.array([300.0,600.0]))
 velocities = initiate_array(no_boids, np.array([0.0,-20.0]), np.array([10.0,20.0]))
 
-boids= np.asarray([positions[0], positions[1],velocities[0], velocities[1]])
-
-
-# separate functions for updating positions and velocities
-# change from list structures to numpy arrays
-# does it make sense to treat x and y separately, or put
-# them in the same array?
-# stop for range, and use for x in array
-# vectorisation of the code
-
 
 def middle(positions, velocities):
 
@@ -34,7 +24,7 @@ def middle(positions, velocities):
     velocities -= direction*0.01
 
 
-def calc_sq_distances(positions):
+def calc_distances(positions):
 
     displacement = positions[:, np.newaxis,:] - positions[:,:,np.newaxis]
     sq_displacement = displacement*displacement
@@ -64,15 +54,19 @@ def match_boids(positions, velocities, sq_distances):
     velocities -= np.mean(velocity_deltas_if_close,1)*0.125
 
 
-def update_boids(boids):
-
-    positions, velocities = (boids[0:2], boids[2:4])
+def update_boids(positions, velocities):
 
     # update velocity
-
+    # fly towards middle
     middle(positions, velocities)
-    displacement, sq_distances = calc_sq_distances(positions)
+
+    # calculate displacement and squared distance for use in avoid_boids, match_boids
+    displacement, sq_distances = calc_distances(positions)
+
+    # fly away from nearby boids
     avoid_boids(positions, velocities, sq_distances, displacement)
+
+    # match velocity of nearby boids
     match_boids(positions, velocities, sq_distances)
 
     # Move according to velocities
@@ -80,11 +74,11 @@ def update_boids(boids):
 
 figure=plt.figure()
 axes=plt.axes(xlim=(-500,1500), ylim=(-500,1500))
-scatter=axes.scatter(boids[0],boids[1])
+scatter=axes.scatter(positions[0],positions[1])
 
 def animate(frame):
-    update_boids(boids)
-    scatter.set_offsets((boids[0],boids[1]))
+    update_boids(positions, velocities)
+    scatter.set_offsets((positions[0],positions[1]))
 
 anim = animation.FuncAnimation(figure, animate, frames=200, interval=50)
 
