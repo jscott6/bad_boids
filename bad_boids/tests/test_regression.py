@@ -19,10 +19,11 @@ def test_bad_boids_regression():
 
     '''
 
-    positions = np.asarray(regression_data["before"][0:2])
-    velocities = np.asarray(regression_data["before"][2:])
-    boids.update_boids(positions, velocities)
+    flock = boids(size = 50)
+    flock.positions = np.asarray(regression_data["before"][0:2])
+    flock.velocities = np.asarray(regression_data["before"][2:])
+    flock.update()
     # check that positions match
-    assert np.all(abs(np.asarray(regression_data["after"][0:2]) - positions) < 1e-1)
+    assert np.all(abs(np.asarray(regression_data["after"][0:2]) - flock.positions) < 1e-1)
     # check that velocities match
-    assert np.all(abs(np.asarray(regression_data["after"][2:]) - velocities) < 1e-1)
+    assert np.all(abs(np.asarray(regression_data["after"][2:]) - flock.velocities) < 1e-1)
