@@ -26,7 +26,7 @@ boids= np.asarray([positions[0], positions[1],velocities[0], velocities[1]])
 # vectorisation of the code
 
 
-def middle(positions, velocity):
+def middle(positions, velocities):
 
     # Fly towards the middle
     means = np.mean(positions,1)
@@ -34,12 +34,17 @@ def middle(positions, velocity):
     velocities -= direction*0.01
 
 
-def avoid_boids(positions, velocity):
+def calc_sq_distances(positions):
 
-    # Fly away from nearby boids
     displacement = positions[:, np.newaxis,:] - positions[:,:,np.newaxis]
     sq_displacement = displacement*displacement
     sq_distances = np.sum(sq_displacement, 0)
+
+    return (displacement,sq_distances)
+
+def avoid_boids(positions, velocities, sq_distances, displacement):
+
+    # Fly away from nearby boids
     crit_distance = 100
     close = sq_distances > crit_distance
     displacement_if_close = np.copy(displacement)
@@ -48,7 +53,7 @@ def avoid_boids(positions, velocity):
     velocities += np.sum(displacement_if_close,1)
 
 
-def match_boids(positions, velocity):
+def match_boids(positions, velocities, sq_distances):
 
     # Try to match speed with nearby boids
     velocity_deltas = velocities[:,np.newaxis,:] - velocities[:,:, np.newaxis]
@@ -66,8 +71,9 @@ def update_boids(boids):
     # update velocity
 
     middle(positions, velocities)
-    avoid_boids(positions, velocities)
-    match_boids(positions, velocities)
+    displacement, sq_distances = calc_sq_distances(positions)
+    avoid_boids(positions, velocities, sq_distances, displacement)
+    match_boids(positions, velocities, sq_distances)
 
     # Move according to velocities
     positions += velocities
