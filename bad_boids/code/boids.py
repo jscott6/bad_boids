@@ -25,20 +25,16 @@ boids= np.asarray([positions[0], positions[1],velocities[0], velocities[1]])
 # stop for range, and use for x in array
 # vectorisation of the code
 
-def update_velocities(position, velocity):
 
-    for item in velocity:
-        item = item + ()
-
-
-def update_boids(boids):
-
-    positions, velocities = (boids[0:2], boids[2:4])
+def middle(positions, velocity):
 
     # Fly towards the middle
     means = np.mean(positions,1)
     direction = positions - means[:,np.newaxis]
     velocities -= direction*0.01
+
+
+def avoid_boids(positions, velocity):
 
     # Fly away from nearby boids
     displacement = positions[:, np.newaxis,:] - positions[:,:,np.newaxis]
@@ -51,11 +47,27 @@ def update_boids(boids):
     displacement_if_close[1,:,:][close] = 0
     velocities += np.sum(displacement_if_close,1)
 
+
+def match_boids(positions, velocity):
+
     # Try to match speed with nearby boids
-    for i in range(no_boids):
-        for j in range(no_boids):
-            if np.sum((positions[:,j]-positions[:,i])**2) < 10000:
-                velocities[:,i] += (velocities[:,j]-velocities[:,i])*0.125/no_boids
+    velocity_deltas = velocities[:,np.newaxis,:] - velocities[:,:, np.newaxis]
+    distant_boids = sq_distances > 10000
+    velocity_deltas_if_close = np.copy(velocity_deltas)
+    velocity_deltas_if_close[0,:,:][distant_boids] = 0
+    velocity_deltas_if_close[1,:,:][distant_boids] = 0
+    velocities -= np.mean(velocity_deltas_if_close,1)*0.125
+
+
+def update_boids(boids):
+
+    positions, velocities = (boids[0:2], boids[2:4])
+
+    # update velocity
+
+    middle(positions, velocities)
+    avoid_boids(positions, velocities)
+    match_boids(positions, velocities)
 
     # Move according to velocities
     positions += velocities
