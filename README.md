@@ -8,6 +8,8 @@ The package can be installed using pip from the command line. The required comma
 
 > pip install git + ...
 
+## Usage
+
 The program may be invoked via the command line as follows:
 
 > boids --size 100
