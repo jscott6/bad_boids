@@ -1,0 +1,3 @@
+
+include boids/code/*.yaml
+include boids/tests/*.yaml

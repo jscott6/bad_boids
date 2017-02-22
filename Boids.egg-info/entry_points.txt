@@ -1,0 +1,3 @@
+[console_scripts]
+boids = boids.code.command_line:main
+
