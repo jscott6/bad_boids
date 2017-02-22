@@ -3,26 +3,22 @@
 # http://github-pages.ucl.ac.uk/rsd-engineeringcourse/ch05construction/10boids.html
 # citations: James Hetherington
 
-from bad_boids.code import boids
+from bad_boids.code.boids import boids
 import pytest
-import os
+from os.path import dirname, split, join
 import yaml
 import numpy as np
 
+
+
+config = yaml.load(open(split(dirname(__file__))[0] + '/code/config.yaml'))
+
 def test_bad_boids_regression():
-    regression_data = yaml.load(open(
-        os.path.join(os.path.dirname(__file__),
-        'fixture.yaml')))
-
-    '''
-    regression_data = yaml.load(open("/Users/jamesscott/Documents/bad_boids/bad_boids/tests/fixture.yaml"))
-
-    '''
-
+    regression_data = yaml.load(open(join(dirname(__file__),'fixture.yaml')))
     flock = boids(size = 50)
     flock.positions = np.asarray(regression_data["before"][0:2])
     flock.velocities = np.asarray(regression_data["before"][2:])
-    flock.update()
+    flock.update(config['params'])
     # check that positions match
     assert np.all(abs(np.asarray(regression_data["after"][0:2]) - flock.positions) < 1e-1)
     # check that velocities match
