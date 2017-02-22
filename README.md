@@ -6,8 +6,7 @@ This packages simulates a flock of boids of an arbitrary size. The code is based
 
 The package can be installed using pip from the command line. The required command is:
 
-> pip install git + ...
-
+> pip install git + git//github.com/jscott6/boids.git
 ## Usage
 
 The program may be invoked via the command line as follows:
