@@ -1,9 +1,18 @@
 
 from .funcs import *
 
-# create a boids class
+
 
 class Boids(object):
+
+    '''
+    class instantiated with 'size', representing number of boids in flock
+
+    class has two methods:
+        initiate --- creates initial position and velocity vectors according to
+                     parameters supplied in init_data.
+        update --- updates velocity and position vectors according to rules.
+    '''
 
     def __init__(self, size = 50):
         self.size = size

@@ -5,6 +5,9 @@ from numpy.testing import assert_array_equal
 
 def test_initiate_array():
 
+    '''
+    tests that initiated position and velocities are within expected bounds
+    '''
     low = [0.0, 0.0]
     high = [1.0, 1.0]
     size = 100
@@ -18,6 +21,9 @@ def test_initiate_array():
 
 def test_middle():
 
+    '''
+    tests 2 boids flying to middle with known result
+    '''
     positions = np.array([[-1.,1.],[-1.,1.]])
     velocities = np.zeros((2,2))
     strength = 0.1
@@ -27,6 +33,10 @@ def test_middle():
 
 
 def test_calc_distances():
+
+    '''
+    tests correct displacement and sq_distance calculation for simple case
+    '''
 
     positions = np.array([[-1.,1.],[-1.,1.]])
     true_displacement_1 = np.array([[0.,-2.],[0.,-2.]])
@@ -43,6 +53,10 @@ def test_calc_distances():
 
 def test_avoid_boids():
 
+    '''
+    tests for a simple case for 3 boids, two of which are 'close'
+    '''
+
     positions = np.array([[0.,3.,4.],[0.,3.,4.]])
     dist = 4
     displacement, sq_distances = calc_distances(positions)
@@ -53,6 +67,10 @@ def test_avoid_boids():
 
 
 def test_match_boids():
+
+    '''
+    tests speed matching in simplified case with known result
+    '''
 
     positions = np.array([[0.,3.,4.],[0.,3.,4.]])
     dist = 4

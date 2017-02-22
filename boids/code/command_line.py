@@ -7,6 +7,10 @@ from os.path import dirname, join
 
 def main():
 
+    '''
+    function will be executed at command line using 'boids' keyword
+    '''
+
     config = yaml.load(open(dirname(__file__) + '/config.yaml'))
     parser = ArgumentParser()
     parser.add_argument('--size', '-s', type = int, default = config['size'])
